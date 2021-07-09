@@ -294,6 +294,18 @@ export default {
           requiredProps.push(tempProp);
         });
 
+        
+        var additionalAttributes = ['postalCode','country']
+
+        // add optional props to create screen
+        additionalAttributes.forEach((prop) => {
+          const tempProp = cloneDeep(propList[prop]);
+          tempProp.key = prop;
+          tempProp.isOptional = true;
+          requiredProps.push(tempProp);
+        });
+
+
         // Special case for Assignments, add 'attributes' property so it is included in createProperties for the CreateResource modal.
         if (this.routerParameters.resourceName.endsWith('assignment')) {
           propList.attributes.key = 'attributes';
