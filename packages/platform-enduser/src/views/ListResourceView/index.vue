@@ -286,24 +286,30 @@ export default {
       if (privilege.data.CREATE.allowed) {
         const propList = pick(schema.data.properties, privilege.data.CREATE.properties);
         const requiredProps = [];
-
+      /*
         schema.data.required.forEach((prop) => {
           const tempProp = cloneDeep(propList[prop]);
           tempProp.key = prop;
           tempProp.required = true;
           requiredProps.push(tempProp);
-        });
+        });*/
+      
+      for (const key in propList) {
+          if (propList.hasOwnProperty(key)) {
+              const tempProp = cloneDeep(propList[key]);
+              if (tempProp.type == 'string'  && tempProp.userEditable) { //don't render relationships, passwords, etc
+                if(schema.data.required.includes(key)) {
+                  tempProp.required = true;
+                } else {
+                  tempProp.isOptional = true;
+                }
+                console.log(tempProp);
+                tempProp.key = key;
+                requiredProps.push(tempProp);
+              }
+          }
+      }
 
-        
-        var additionalAttributes = ['postalCode','country']
-
-        // add optional props to create screen
-        additionalAttributes.forEach((prop) => {
-          const tempProp = cloneDeep(propList[prop]);
-          tempProp.key = prop;
-          tempProp.isOptional = true;
-          requiredProps.push(tempProp);
-        });
 
 
         // Special case for Assignments, add 'attributes' property so it is included in createProperties for the CreateResource modal.
